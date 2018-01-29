@@ -1,6 +1,12 @@
 #include "igtDecodingTask.h"
 
 
+/**
+ * @brief igtDecodingTask::igtDecodingTask
+ * @param dataware
+ * @param inputQueueManager
+ * @param datagramAnalyser
+ */
 igtDecodingTask::igtDecodingTask(pissBaseDeDonnee *dataware, igtInputQueueManager *inputQueueManager, igtDatagramAnalyser *datagramAnalyser)
 {
     this->dataware = dataware;
@@ -10,9 +16,12 @@ igtDecodingTask::igtDecodingTask(pissBaseDeDonnee *dataware, igtInputQueueManage
 
 }
 
+//! ---------------------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief igtDecodingTask::run
+//!
 void igtDecodingTask::run(){
     while(flag){
-
         if(inputQueueManager->getLength() > 0){
             for(unsigned char cpt = 0; cpt < inputQueueManager->getLength(); cpt++){
 
@@ -29,6 +38,10 @@ void igtDecodingTask::run(){
     }
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief igtDecodingTask::stop
+//!
 void igtDecodingTask::stop(){
     flag = false;
 }

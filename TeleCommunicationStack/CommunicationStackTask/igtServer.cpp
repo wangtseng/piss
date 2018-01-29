@@ -99,6 +99,9 @@ void igtServer::stopServerThread(){
 //! \param handle
 //!
 void igtServer::incomingConnection(qintptr handle){
+
+    qDebug()<<"incoming client arrived";
+
     this->incomingConnectionCount++;
 
     igtInputQueue *inputQueue = new igtInputQueue();
@@ -130,7 +133,7 @@ QString igtServer::ipDetect(){
     for(int nIter = 0; nIter < list.count(); nIter++){
         if(list[nIter].protocol() == QAbstractSocket::IPv4Protocol && list[nIter] != QHostAddress(QHostAddress::LocalHost)){
             ret = list[nIter].toString();
-            if(ret.contains("172")){
+            if(ret.contains("192")){
                 break;
             }
         }

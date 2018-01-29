@@ -113,7 +113,7 @@ QString igtClient::ipDetect(){
             if(list[nIter].protocol() == QAbstractSocket::IPv4Protocol && list[nIter] != QHostAddress(QHostAddress::LocalHost)){
 
                 ret = list[nIter].toString();
-                if(ret.contains("172")){
+                if(ret.contains("192")){
                     break;
                 }
             }

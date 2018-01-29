@@ -40,13 +40,18 @@ double igtNDIPosition::getPositionZ(){
 
 void igtNDIPosition::transformIgtdatagramToNDIPosition(igtDatagram* datagram){
     QByteArray NDIposition = datagram->getIgtDatagramBody();
+
     this->setTimestamps(datagram->getTimeStampes());
-    unsigned int positionXSymbol = (uchar)NDIposition[0];
-    unsigned int temp1 = (unsigned int)((0x000000ff & NDIposition[1]) + ((0x000000ff & NDIposition[2])<<8));
-    unsigned int positionYSymbol = NDIposition[3];
-    unsigned int temp2 = (unsigned int)((0x000000ff & NDIposition[4]) + ((0x000000ff & NDIposition[5])<<8));
-    unsigned int positionZSymbol = (uchar)NDIposition[6];
-    unsigned int temp3 = (unsigned int)((0x000000ff & NDIposition[7]) + ((0x000000ff & NDIposition[8])<<8));
+
+    unsigned int positionXSymbol = (unsigned int)NDIposition[0];
+    int temp1 = (unsigned int)((0x000000ff & NDIposition[1]) + ((0x000000ff & NDIposition[2])<<8));
+
+    unsigned int positionYSymbol = (unsigned int)NDIposition[3];
+    int temp2 = (unsigned int)((0x000000ff & NDIposition[4]) + ((0x000000ff & NDIposition[5])<<8));
+
+    unsigned int positionZSymbol = (unsigned int)NDIposition[6];
+    int temp3 = (unsigned int)((0x000000ff & NDIposition[7]) + ((0x000000ff & NDIposition[8])<<8));
+
     if(positionXSymbol != 0){
         temp1 = -temp1;
     }
@@ -60,7 +65,6 @@ void igtNDIPosition::transformIgtdatagramToNDIPosition(igtDatagram* datagram){
     double abssisa = temp1*1.0/100;
     double ordinate = temp2*1.0/100;
     double iso = temp3*1.0/100;
-
 
     this->setPositionX(abssisa);
     this->setPositionY(ordinate);

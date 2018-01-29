@@ -203,6 +203,7 @@ protected:
 
 private:
     QStringList ndiInfo;
+    int ndiInfoCount;
     vtkActor *previousNDIPosActor;
 
     vtkSmartPointer<vtkActor> grayMatterActor;
@@ -464,6 +465,8 @@ private:
     QString configuratonFilePath;
 
     vtkOrientationMarkerWidget* axes;
+
+    QVector<igtNDIPosition *> positionList;
 
 signals:
     void finished();

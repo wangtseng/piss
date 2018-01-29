@@ -5,12 +5,8 @@
  */
 igtCommunicationStack::igtCommunicationStack(pissBaseDeDonnee* database){
 
-//    if(database == NULL){
-//        return;
-//    }
-
     this->igtClientCount = 0;
-    int mode = 172;
+    int mode = 192;
 
     this->database = database;
     this->inputQueueManager = new igtInputQueueManager();

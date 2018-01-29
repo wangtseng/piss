@@ -666,6 +666,15 @@ void Patient::doImageFileLecture(){
 
 //!---------------------------------------------------------------------------------------------------------------------------------
 //!
+//! \brief Patient::getMagneticTackingDataPath
+//! \return
+//!
+QString Patient::getMagneticTackingDataPath(){
+    return this->myPath + "/magnetic_tracking_data/";
+}
+
+//!---------------------------------------------------------------------------------------------------------------------------------
+//!
 //! \brief Patient::getMRAPath
 //! \return
 //!

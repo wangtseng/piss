@@ -58,6 +58,7 @@ public:
     QString getBirthdayOfPatient();
     void doImageFileLecture();
     QString getCTImagePath();
+    QString getMagneticTackingDataPath();
     QString getName();
 
     QString getFirstName();

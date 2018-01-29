@@ -18,7 +18,6 @@ igtDatagramAnalyser::igtDatagramAnalyser(pissBaseDeDonnee* dataware)
 //! \param datagram
 //!
 void igtDatagramAnalyser::analyse(igtDatagram *datagram){
-    //qDebug()<<"igtDatagramAnalyser::analyse:"<<datagram->getDataType();
     switch(datagram->getDataType()){
         case HelloMsg:{
             decodeHelloMsg(datagram);

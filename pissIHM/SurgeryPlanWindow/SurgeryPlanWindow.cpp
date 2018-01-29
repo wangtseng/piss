@@ -31,6 +31,76 @@ SurgeryPlanWindow::SurgeryPlanWindow(QRect rect,
 
 }
 
+//! --------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief SurgeryPlanWindow::updateNDIPos
+//!
+void SurgeryPlanWindow::updateNDIPos(){
+//    if(previousNDIPosActor != NULL){
+//        this->mainRenderer->RemoveActor(previousNDIPosActor);
+//    }
+    
+    igtNDIPosition *ret = this->patientHandling->fetchNDIPosition();
+    if(ret == NULL){
+        return;
+    }
+    
+    //positionList.append(ret);
+
+    //! TODO .....
+    vtkSphereSource *pos = vtkSphereSource::New();
+    pos->SetRadius(1);
+    pos->SetThetaResolution(12);
+    pos->SetPhiResolution(6);
+    pos->SetCenter(ret->getPositionX(),ret->getPositionY(),ret->getPositionZ());
+
+    this->patientHandling->removeFirstNDIPosition();
+
+    vtkPolyDataMapper *posMapper = vtkPolyDataMapper::New();
+    posMapper->SetInputConnection(pos->GetOutputPort());
+
+    vtkActor *posActor = vtkActor::New();
+    posActor->SetMapper(posMapper);
+    posActor->GetProperty()->SetColor(0,169,0);
+
+    previousNDIPosActor = posActor;
+
+    this->mainRenderer->AddActor(posActor);
+
+    this->patientMRAImage->update();
+
+    //qDebug()<<ret->getTimestamps()<<ret->getPositionX()<<ret->getPositionY()<<ret->getPositionZ();
+    QString x = QString::number(ret->getTimestamps())+";"+  QString::number(ret->getPositionX())+";"+ QString::number(ret->getPositionY())+";"+  QString::number(ret->getPositionZ());
+    ndiInfo.append(x);
+
+    if(ndiInfo.length() == 10){
+        this->documenter();
+        ndiInfo.clear();
+        this->ndiInfoCount += 1;
+    }
+}
+
+//! ----------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief SurgeryPlanWindow::documenter
+//!
+void SurgeryPlanWindow::documenter(){
+
+
+    QFile f(this->patientHandling->getMagneticTackingDataPath()+QString::number(this->ndiInfoCount)+".csv");
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Text)){
+        cout << "Open failed." << endl;
+    }
+
+    QTextStream txtOutput(&f);
+
+    for(int cpt = 0; cpt < ndiInfo.length(); cpt++){
+        txtOutput <<ndiInfo.at(cpt)<< endl;
+    }
+
+    f.close();
+}
+
 //! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief SurgeryPlanWindow::reconstructButtonClicked
@@ -163,64 +233,6 @@ void SurgeryPlanWindow::displayTragetArchitecture(){
     //this->mainRenderer->AddActor(actor);
 
     this->patientMRAImage->update();
-
-}
-
-//! --------------------------------------------------------------------------------------------------------------------------------
-//!
-//! \brief SurgeryPlanWindow::updateNDIPos
-//!
-void SurgeryPlanWindow::updateNDIPos(){
-//    if(previousNDIPosActor != NULL){
-//        this->mainRenderer->RemoveActor(previousNDIPosActor);
-//    }
-
-    igtNDIPosition *ret = this->patientHandling->fetchNDIPosition();
-
-    if(ret == NULL){
-        return;
-    }
-
-    vtkSphereSource *pos = vtkSphereSource::New();
-    pos->SetRadius(2);
-    pos->SetThetaResolution(12);
-    pos->SetPhiResolution(6);
-    pos->SetCenter(ret->getPositionX(),ret->getPositionY(),ret->getPositionZ());
-
-    this->patientHandling->removeFirstNDIPosition();
-
-    vtkPolyDataMapper *posMapper = vtkPolyDataMapper::New();
-    posMapper->SetInputConnection(pos->GetOutputPort());
-
-    vtkActor *posActor = vtkActor::New();
-    posActor->SetMapper(posMapper);
-    posActor->GetProperty()->SetColor(0,169,0);
-
-    previousNDIPosActor = posActor;
-
-    this->mainRenderer->AddActor(posActor);
-
-    this->patientMRAImage->update();
-    //qDebug()<<ret->getTimestamps()<<ret->getPositionX()<<ret->getPositionY()<<ret->getPositionZ();
-    QString x = QString::number(ret->getTimestamps())+","+  QString::number(ret->getPositionX())+","+ QString::number(ret->getPositionY())+","+  QString::number(ret->getPositionZ());
-    ndiInfo.append(x);
-}
-
-
-void SurgeryPlanWindow::documenter(){
-    QFile f("C:\\Users\\cheng\\Documents\\CanalyserWorkspace\\CanalyserMetadata\\ndi_pos.txt");
-    if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        cout << "Open failed." << endl;
-    }
-
-    QTextStream txtOutput(&f);
-
-    for(int cpt = 0; cpt < ndiInfo.length(); cpt++){
-        txtOutput <<ndiInfo.at(cpt)<< endl;
-    }
-
-    f.close();
 }
 
 //! --------------------------------------------------------------------------------------------------------------------------------
@@ -329,7 +341,7 @@ void SurgeryPlanWindow::update(){
 
     this->loadVesselsExisted();
 
-    this->realTimeTrackingNDITimer->start(200);
+    this->realTimeTrackingNDITimer->start(100);
 }
 
 //! --------------------------------------------------------------------------------------------------------------------------------
@@ -1309,6 +1321,7 @@ void SurgeryPlanWindow::initialisation(){
 
     realTimeTrackingNDITimer = new QTimer();
     previousNDIPosActor = NULL;
+    this->ndiInfoCount = 0;
 
 }
 

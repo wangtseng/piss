@@ -20,14 +20,12 @@ igtReceptionTask::igtReceptionTask(int ID, igtInputQueue *inputQueue){
 void igtReceptionTask::run(){
     while(1){
         if (!socket->bytesAvailable()) {
-//            qDebug()<<"waiting";
             continue;
         }
 
         this->read();
         msleep(50);
     }
-//    connect(socket,SIGNAL(disconnected()),this,SLOT(disc()));
 }
 
 //! --------------------------------------------------------------------------
@@ -36,12 +34,7 @@ void igtReceptionTask::run(){
 //!
 void igtReceptionTask::read(){
     this->received_frame_count += 1;
-    //qDebug()<<"data:"<<this->received_frame_count;
-
     QByteArray array = socket->read(1024);
-
-    //qDebug()<<"data:"<<this->received_frame_count<<"datagram length:"<<array.length();
-
     igtDatagram *datagram = new igtDatagram();
     datagram->decode(array);
     this->inputQueueSave->append(datagram);
@@ -55,7 +48,10 @@ void igtReceptionTask::disc(){
     socket->deleteLater();
 }
 
+//! ---------------------------------------------------------------------------
+//!
+//! \brief igtReceptionTask::stop
+//!
 void igtReceptionTask::stop(){
     this->quit();
-//    qDebug()<<"stop";
 }

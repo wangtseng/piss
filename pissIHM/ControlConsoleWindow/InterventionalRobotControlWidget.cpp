@@ -102,7 +102,7 @@ void InterventionalRobotControlWidget::setConnections(){
 //! \brief igtControlConsoleWindow::pullBackContrastMedia
 //!
 void InterventionalRobotControlWidget::pullBackContrastMedia(){
-    this->patientHandling->appendInjectionCommand(50.0, 2.0);
+    this->patientHandling->appendInjectionCommand(500.0, 2.0);
 }
 
 //!----------------------------------------------------------------------------------------------------------
@@ -111,14 +111,39 @@ void InterventionalRobotControlWidget::pullBackContrastMedia(){
 //!
 void InterventionalRobotControlWidget::pushContrastMedia(){
     QString cs = this->contrastLineEdit->text();
-    QString vs = cs.split("ml")[0];
-    double volume = vs.toDouble();
 
-    cs = this->contrastSpeedLineEdit->text();
-    vs = cs.split("ml")[0];
-    double speed = vs.toDouble();
+    if(cs.contains("ml")){
+        QString vs = cs.split("ml")[0];
+        double volume = vs.toDouble();
 
-    this->patientHandling->appendInjectionCommand(volume, speed);
+        cs = this->contrastSpeedLineEdit->text();
+        vs = cs.split("ml")[0];
+        double speed = vs.toDouble();
+
+        this->patientHandling->appendInjectionCommand(volume, speed);
+    }
+    else if(cs.contains("mm")){
+        QString vs = cs.split("mm")[0];
+        double volume = vs.toDouble();
+
+        cs = this->contrastSpeedLineEdit->text();
+        vs = cs.split("mm")[0];
+        double speed = vs.toDouble();
+
+        this->patientHandling->appendInjectionCommand(volume, speed);
+    }
+    else if(cs.contains("deg")){
+        QString vs = cs.split("deg")[0];
+        double volume = vs.toDouble();
+
+        cs = this->contrastSpeedLineEdit->text();
+        vs = cs.split("deg")[0];
+        double speed = vs.toDouble();
+
+        this->patientHandling->appendInjectionCommand(volume, speed);
+    }
+
+
 }
 
 //! -----------------------------------------------------------------------------------------------------------
@@ -662,7 +687,7 @@ void InterventionalRobotControlWidget::constructForceFeedBackVisualizeArea(){
     moteurHandlingIndication = new QLabel("Motor Handling:");
     moteurHandlingIndication->setFont(*this->caracterStyle);
 
-    contrastLabel = new QLabel("Contrast Media:");
+    contrastLabel = new QLabel("Value:");
     contrastLabel->setFont(*this->caracterStyle);
 
     contrastSpeedLabel = new QLabel("Speed Configuration");

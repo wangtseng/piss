@@ -44,9 +44,9 @@ PatientsWidget::PatientsWidget(SystemDispatcher* dispatcher,
 //! \brief PatientsWidget::setConnections
 //!
 void PatientsWidget::setConnections(){
+    this->connect(this->surgeryLaunchButton,       SIGNAL(clicked()),               this,  SLOT(launchSurgery()));
     this->connect(this->simpleModeButton,          SIGNAL(clicked()),               this,  SLOT(simpleViewButtonClicked()));
     this->connect(this->cdRomParseButton,          SIGNAL(clicked()),               this,  SLOT(doParseCdRom()));
-    this->connect(this->surgeryLaunchButton,       SIGNAL(clicked()),               this,  SLOT(launchSurgery()));
     this->connect(this->addPatientButton,          SIGNAL(clicked()),               this,  SLOT(addPatient()));
     this->connect(this->leftSelectButton,          SIGNAL(clicked()),               this,  SLOT(doLeftSelect()));
     this->connect(this->rightSelectButton,         SIGNAL(clicked()),               this,  SLOT(doRightSelect()));

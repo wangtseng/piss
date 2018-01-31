@@ -39,6 +39,11 @@ vtkImageData * ImageFileInterface_RawMhd::getImage(){
     return reader->GetOutput();
 }
 
+//! -------------------------------------------------------------------------------------------------------
+//!
+//! \brief ImageFileInterface_RawMhd::getImageExtentInformation
+//! \param extent
+//!
 void ImageFileInterface_RawMhd::getImageExtentInformation(int* extent){
     reader->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
 }

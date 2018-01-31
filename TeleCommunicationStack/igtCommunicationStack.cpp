@@ -13,9 +13,9 @@ igtCommunicationStack::igtCommunicationStack(pissBaseDeDonnee* database){
     this->outputQueueManager = new igtOutputQueueManager();
     this->datagramAnalyser = new igtDatagramAnalyser(database);
 
-    this->server = new igtServer(inputQueueManager);
-    this->server->setMode(mode);
-    this->connect(this->server, SIGNAL(localIPDetect(QString)), this, SLOT(getSelfIp(QString)));
+    this->serv = new igtServer(inputQueueManager);
+    this->serv->setMode(mode);
+    this->connect(this->serv, SIGNAL(localIPDetect(QString)), this, SLOT(getSelfIp(QString)));
 
     this->encodingTask = new igtEncodingTask(this->database, this->outputQueueManager, this->datagramAnalyser);
     this->decodingTask = new igtDecodingTask(this->database, inputQueueManager, this->datagramAnalyser);
@@ -31,7 +31,7 @@ igtCommunicationStack::igtCommunicationStack(pissBaseDeDonnee* database){
 //! \return
 //!
 int igtCommunicationStack::getIncomingConnectionCount(){
-    return this->server->getIncomingConnectionCount();
+    return this->serv->getIncomingConnectionCount();
 }
 
 //! --------------------------------------------------------------------------------
@@ -41,10 +41,9 @@ int igtCommunicationStack::getIncomingConnectionCount(){
 //!
 bool igtCommunicationStack::lauchServer(){
     bool ret;
-    ret = server->launchServer();
+    ret = serv->launchServer();
     this->decodingTask->start();
     this->encodingTask->start();
-    //this->addParameterRotateToOutputqueueTask->start();
     return ret;
 }
 
@@ -55,7 +54,7 @@ bool igtCommunicationStack::lauchServer(){
 //!
 bool igtCommunicationStack::stopServer(){   
     bool ret = false;
-     ret = this->server->stopServer();
+     ret = this->serv->stopServer();
 //    this->server->stopServerThread();
 //    this->stopDecodingTaskThread();
 //    ret = true;

@@ -102,6 +102,8 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
 #include "vtkImageDataToPointSet.h"
 #include "vtkOutlineFilter.h"
 #include "vtkSTLReader.h"
+#include "vtkXMLPolyDataWriter.h"
+#include "vtkSTLWriter.h"
 
 struct TransferOptionStates{
     bool opacityTransferOptionChoosen = false;
@@ -191,6 +193,7 @@ public:
     void sfunctionSource();
     void cprMath();
     vtkSmartPointer<vtkActor> generatePolyDataActorFromMetaFile(QString path, int r, int g, int b,int iterations);
+    vtkSmartPointer<vtkActor> generatePolyDataActorFrom(vtkImageData* input, int r, int g, int b,int iterations);
     vtkSmartPointer<vtkActor> generateBoundBox(vtkImageData*img);
     void displayTragetArchitecture();
     void documenter();
@@ -208,13 +211,14 @@ private:
 
     vtkSmartPointer<vtkActor> grayMatterActor;
     vtkSmartPointer<vtkActor> whiteMatterActor;
-    //vtkSmartPointer<vtkActor> vesselActor;
     vtkSmartPointer<vtkActor> vesselBackActor;
     vtkSmartPointer<vtkActor> vesselFrontActor;
     vtkSmartPointer<vtkActor> vesselLeftActor;
     vtkSmartPointer<vtkActor> vesselRightActor;
     QMap<QString, vtkActor*> vesselActors;
     QMap<QString, vtkActor*> cheminActors;
+
+    vtkSmartPointer<vtkActor> vesselActor;
 
     //! ---------------------------------------------------------------------------------------------------------
     //! MRI

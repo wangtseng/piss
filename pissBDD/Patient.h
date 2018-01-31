@@ -34,6 +34,7 @@
 #include "igtNDIPosition.h"
 #include "igtContrastMediaPush.h"
 #include "CloseSessionMessage.h"
+#include "vtkMath.h"
 
 
 class Patient
@@ -201,6 +202,8 @@ public:
     bool GuidewireMovingDistanceSequenceIsEmpty();
 
     QList<QString> getCenterLines();
+
+    vtkImageData *convertVolumeToUnsignedShort(vtkImageData* input);
 
 
 private:

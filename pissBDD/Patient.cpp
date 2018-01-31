@@ -604,10 +604,55 @@ bool Patient::loadMRAImageFile(const QString &fileName){
 
     //!Pass the reference of the image read to the pointer declared upon
     this->setMRAImage(fileInterface->getImage());
+
     fileInterface->getImageExtentInformation(imageExtents);
 
     return true;
 }
+
+//! -------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief Patient::convertVolumeToUnsignedShort
+//! \return
+//!
+vtkImageData* Patient::convertVolumeToUnsignedShort(vtkImageData* input){
+    vtkImageData* ret = NULL;
+
+    //! get input image information
+    int* dims_input = input->GetDimensions();
+    double* spacing_input = input->GetSpacing();
+
+    //!initialize a new volume data
+    ret = vtkImageData::New();
+    ret->SetDimensions(dims_input[0], dims_input[1], dims_input[2]);
+    ret->SetSpacing(spacing_input[0], spacing_input[1], spacing_input[2]);
+    ret->AllocateScalars(VTK_UNSIGNED_SHORT, 1);
+
+    //double* range = input->GetScalarRange();
+
+    // Fill every entry of the image data with "2.0"
+    for (int z = 0; z < dims_input[2]; z++){
+        for (int y = 0; y < dims_input[1]; y++){
+            for (int x = 0; x < dims_input[0]; x++){
+                float* pixelOrigin = static_cast<float*>(input->GetScalarPointer(x, y, z));
+                unsigned short* pixel = static_cast<unsigned short*>(ret->GetScalarPointer(x, y, z));
+
+                if (x<10 || x>dims_input[0] - 10 || y<10 || y>dims_input[1] - 10 || z<10 || z>dims_input[2] - 10){
+                     pixel[0] = 0;
+                     continue;
+                }
+
+                pixel[0] = vtkMath::Round(pixelOrigin[0] * 1000);
+
+                if(pixel[0]<100 || pixel[0]>450)
+                    pixel[0] =0;
+            }
+        }
+    }
+
+    return ret;
+}
+
 
 //! --------------------------------------------------------------------------------------------------------------------------------
 //!
@@ -615,7 +660,17 @@ bool Patient::loadMRAImageFile(const QString &fileName){
 //! \param personnelMRAImage
 //!
 void Patient::setMRAImage(vtkImageData *personnelMRAImage){
-    this->MriImageForDisplay = personnelMRAImage;
+    QString type = QString(personnelMRAImage->GetScalarTypeAsString());
+
+    if(type.contains("float")){
+        qDebug()<<"hehe";
+        this->MriImageForDisplay = convertVolumeToUnsignedShort(personnelMRAImage);
+    }
+    else{
+        this->MriImageForDisplay = personnelMRAImage;
+    }
+
+
 }
 
 //!---------------------------------------------------------------------------------------------------------------------------------

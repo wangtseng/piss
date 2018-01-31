@@ -69,11 +69,11 @@ void SurgeryPlanWindow::updateNDIPos(){
 
     this->patientMRAImage->update();
 
-    //qDebug()<<ret->getTimestamps()<<ret->getPositionX()<<ret->getPositionY()<<ret->getPositionZ();
+    qDebug()<<ret->getTimestamps()<<ret->getPositionX()<<ret->getPositionY()<<ret->getPositionZ();
     QString x = QString::number(ret->getTimestamps())+";"+  QString::number(ret->getPositionX())+";"+ QString::number(ret->getPositionY())+";"+  QString::number(ret->getPositionZ());
     ndiInfo.append(x);
 
-    if(ndiInfo.length() == 10){
+    if(ndiInfo.length() == 100){
         this->documenter();
         ndiInfo.clear();
         this->ndiInfoCount += 1;
@@ -324,7 +324,7 @@ void SurgeryPlanWindow::toFindReconstructedResult(){
 //!
 void SurgeryPlanWindow::update(){
 
-    this->timerToWaittingReconstructedResult->start(1000);
+    //this->timerToWaittingReconstructedResult->start(1000);
 
     this->patientHandling->doImageFileLecture();
 
@@ -334,12 +334,13 @@ void SurgeryPlanWindow::update(){
     }while(!this->patientHandling->readFinished());
 
     this->updatePatientPersonelInformation();
+
     this->displayPatientMRAImage();
     this->updatePatientMRAImageStatistics();
     this->updatePatientMRAImageHistogram();
     this->initialRendering();
 
-    this->loadVesselsExisted();
+    //this->loadVesselsExisted();
 
     this->realTimeTrackingNDITimer->start(100);
 }
@@ -1902,6 +1903,56 @@ vtkSmartPointer<vtkActor> SurgeryPlanWindow::generateBoundBox(vtkImageData*img){
 
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief SurgeryPlanWindow::generatePolyDataActorFrom
+//! \param input
+//! \param r
+//! \param g
+//! \param b
+//! \param iterations
+//! \return
+//!
+vtkSmartPointer<vtkActor> SurgeryPlanWindow::generatePolyDataActorFrom(vtkImageData* input, int r, int g, int b,int iterations){
+    vtkSmartPointer<vtkMarchingCubes> MC = vtkSmartPointer<vtkMarchingCubes>::New();
+    vtkSmartPointer<vtkDecimatePro> deci = vtkSmartPointer<vtkDecimatePro>::New();
+    vtkSmartPointer<vtkSmoothPolyDataFilter> smooth = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+    vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    vtkSmartPointer<vtkPolyDataMapper> MC_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    vtkSmartPointer<vtkActor> MC_actor = vtkSmartPointer<vtkActor>::New();
+    vtkSmartPointer<vtkSTLWriter> writer = vtkSmartPointer<vtkSTLWriter>::New();
+
+    MC->SetInputData(input);
+    MC->SetValue(0, 1);
+
+    deci->SetInputConnection(MC->GetOutputPort());
+    deci->SetTargetReduction(1.0);
+    deci->PreserveTopologyOn();
+
+    smooth->SetInputConnection(deci->GetOutputPort());
+    smooth->SetNumberOfIterations(iterations);
+    smooth->BoundarySmoothingOn();
+
+    normals->SetInputConnection(smooth->GetOutputPort());
+    normals->FlipNormalsOn();
+
+    writer->SetFileName("C:\\data\\phantom.stl");
+    writer->SetInputConnection(normals->GetOutputPort());
+    writer->Write();
+
+    MC_mapper->SetScalarVisibility(0);
+    MC_mapper->SetInputConnection(normals->GetOutputPort());
+
+    MC_actor->SetMapper(MC_mapper);
+    MC_actor->GetProperty()->SetColor(r*1.0/255, g*1.0/255, b*1.0/255);
+    //MC_actor->GetProperty()->SetRepresentationToSurface();
+    MC_actor->GetProperty()->SetRepresentationToPoints();
+    MC_actor->GetProperty()->SetOpacity(1.0);
+
+    return MC_actor;
+
+}
+
 //!--------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief SurgeryPlanWindow::generatePolyDataActor
@@ -2377,16 +2428,18 @@ void SurgeryPlanWindow::vesselOptionReleased(){
     this->renderWindow->Render();
     this->patientMRAImage->update();*/
 
-    QList<QString> vesselActorsKeys = vesselActors.keys();
+    //QList<QString> vesselActorsKeys = vesselActors.keys();
     //QList<QString> cheminActorsKeys = cheminActors.keys();
 
-    for(int i = 0; i < vesselActorsKeys.length(); i++){
-         this->mainRenderer->AddActor(vesselActors[vesselActorsKeys.at(i)]);
-        this->mainRenderer->AddActor(cheminActors[vesselActorsKeys.at(i)]);
-    }
+//    for(int i = 0; i < vesselActorsKeys.length(); i++){
+//         this->mainRenderer->AddActor(vesselActors[vesselActorsKeys.at(i)]);
+//        this->mainRenderer->AddActor(cheminActors[vesselActorsKeys.at(i)]);
+//    }
+//    this->patientMRAImage->update();
+
+    vesselActor = generatePolyDataActorFrom(this->patientHandling->getMraImageToBeDisplayed(), 255,128,0, 250);
+    this->mainRenderer->AddActor(vesselActor);
     this->patientMRAImage->update();
-
-
 }
 
 

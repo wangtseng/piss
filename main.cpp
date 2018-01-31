@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     //! -------------------------------------------------------------------------------------------
     //! l'IHM
     //! -------------------------------------------------------------------------------------------
-    pissMainWindow*  mainWindow = new pissMainWindow(dispatcher);
+    pissMainWindow* mainWindow = new pissMainWindow(dispatcher);
 
     //! -------------------------------------------------------------------------------------------
     //! Chercher les maladies existants
